@@ -19,7 +19,7 @@
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/V-nika-viktorovna/final_task1.git
+   git clone https://github.com/V-nika-viktorovna/storage_user_data.git
    ```
 2. Создайте и активируйте виртуальное окружение:
 
@@ -39,71 +39,55 @@
 5. Локальный запуск проекта:
 
    ```bash
-    python manage.py runserver
+    uvicorn main:app --reload
+
     ```
 
-6. Ручной deploy на удаленном сервере:
+6. Сборка образов Docker и запуск сервисов:
 
    ```bash
-    1. Подключитесь к удаленному серверу и выполните команды:
-   sudo apt update
-   sudo apt install git
+    docker compose build
    
-    2. Убедитесь, что Git установлен корректно, выполнив команду:
-   git --version
+    docker compose up   
    
-    3. Перейдите в директорию, где вы хотите разместить код вашего приложения.
-   Например:
-   cd /var/www
-   
-    4. Выполните команду для клонирования репозитория:
-   git clone https://github.com/V-nika-viktorovna/final_task1.git
-   
-    5. Перейдите в директорию, где находится ваш файл docker-compose.yml.
-   Например:
-   cd /var/www/repository
-   
-   6. Выполните команду для запуска контейнеров:
-   docker-compose up -d
+   ```
+7. Проверка работоспособности
 
+   ```bash
+   Проверьте работоспособность приложения по адресу http://localhost:8000/docs 
+   или воспользуйтесь инструментами вроде Postman для отправки запросов 
+   непосредственно к API.
+   Ознакомьтесь с документацией по адресу http://localhost:8000/docs
+   
    ```
 
 ## Структура проекта
 ```
-mailing_service/
-├── .github                     # Создание workflows для github
-├── config/                     # Основные настройки проекта
-├── healthy_habits_tracker/     # Приложение рассылок  
-│   ├── migrations/             # Миграции базы данных  
-│   ├── models.py               # Модели данных
-│   ├── pagination.py           # Пагинация страниц с привычками
-│   ├── serializer.py           # Сериалайзер 
-│   ├── services.py             # Сервисные функции (отправка в тг)
-│   ├── tasks.py                # Задачи по расписанию
-│   ├── tests.py                # Тесты 
-│   ├── urls.py                 # urls для работы с привычками
-│   ├── validators.py           # Валидаторы
-│   ├── views.py                # Представления
-│   └── ...
-├── nginx
-├── users/                      # Приложение пользователей 
-├── .dockerignore               # Файл dockerignore 
-├── templates/                  # Базовые шаблоны
-├── .env                        # Переменные окружения
-├── .gitignore                  # Игнорируемые файлы
-├── docker-compose.yaml         # Файл docker-compose.yaml
-├── Dockerfile                  # Файл Dockerfile
-└── manage.py                   # Управление Django
-
-```
-## Использование:
-```bash
-    Зарегистрируйтесь или войдите в систему
-
-    Создайте привычки
-    
-    Ознакомьтесь с документацией по адресу http://localhost:8000/swagger/,
-     после запуска проекта
+storage_user_data/
+├── .venv             # виртуальное окружение Python
+├── migrations        # директория для миграций базы данных
+│   └── versions      # версия миграции базы данных
+├── routers           # папка с роутерами FastAPI
+│   ├── users.py      # обработчики запросов пользователей
+│   └── admin.py      # обработчики административных запросов
+├── tests             # тесты приложения
+│   ├── test_users.py # модуль тестирования функционала пользователей
+│   └── test_admin.py # модуль тестирования административного функционала
+├── .env.example      # пример файла конфигурации окружения
+├── .flake8           # конфигурационный файл linter'а flake8
+├── .gitignore        # правила игнорирования файлов системой контроля версий Git
+├── auth.py           # аутентификация и авторизация пользователей
+├── config.py         # общие настройки и конфигурационные переменные
+├── database.py       # работа с базой данных
+├── docker-compose.yml# Docker-композиция для контейнеризации
+├── Dockerfile        # инструкции сборки Docker-образа
+├── exceptions.py     # обработка исключений
+├── main.py           # точка входа в приложение
+├── models.py         # модели данных (ORM-модели)
+├── pyproject.toml    # проектные метаданные aerich
+├── README.md         # руководство по проекту
+├── requirements.txt  # зависимости Python
+└── schemas.py        # схемы Pydantic для проверки входящих и исходящих данных
 
 ```
 
