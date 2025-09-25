@@ -30,6 +30,17 @@ async def private_list_users(page: int = Query(1, ge=1), size: int = Query(10, l
     return PrivateUsersListResponseModel(data=data, meta=pagination_meta)
 
 
+@router.get("/info/{pk}", response_model=PrivateDetailUserResponseModel)
+async def private_info_user(pk: int, _: User = Depends(require_admin)):
+    """Просмотр полных данных о пользователе для администратора."""
+
+    user = await User.get_or_none(id=pk)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
 @router.post("/create", response_model=PrivateDetailUserResponseModel, status_code=201)
 async def create_user(create_data: PrivateCreateUserModel, _: User = Depends(require_admin)):
     """Создание пользователя для администратора."""
@@ -40,12 +51,15 @@ async def create_user(create_data: PrivateCreateUserModel, _: User = Depends(req
 
 
 @router.delete("/del/{pk}", status_code=204)
-async def delete_user(pk: int = Path(...), _: User = Depends(require_admin)):
+async def delete_user(pk: int = Path(...), no_del: User = Depends(require_admin)):
     """Удаление пользователя для администратора."""
 
     try:
+        if no_del.id == pk:
+            raise HTTPException(status_code=500, detail="Вы не можете удалить сами себя")
         deleted_count = await User.filter(id=pk).delete()
-    except Exception:
+    except Exception as f:
+        print(f)
         raise HTTPException(status_code=500, detail="Что-то пошло не так, мы уже исправляем эту ошибку")
     else:
         if deleted_count > 0:

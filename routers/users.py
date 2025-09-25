@@ -1,8 +1,7 @@
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, Query
-from fastapi.responses import RedirectResponse, Response
-from starlette.status import HTTP_302_FOUND
+from fastapi.responses import Response
 
 from auth import authenticate_user, create_access_token, get_current_user
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
@@ -72,4 +71,4 @@ async def paginate_users(page: int = Query(1, ge=1), size: int = Query(10, le=10
 async def logout(response: Response):
 
     response.delete_cookie("session_token")
-    return RedirectResponse(url="/", status_code=HTTP_302_FOUND)
+    return {"status": "logout success"}

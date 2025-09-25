@@ -6,6 +6,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from starlette.requests import Request
 
 from models import User, User_Pydantic
 
@@ -70,7 +71,7 @@ async def authenticate_user(user_email: str, password: str):
         return user_orm.dict()
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(request: Request):
     """Функция пытается расшифровать токен и получить оттуда идентификатор пользователя (субъекта).
     Если токен некорректен или истек, выдает ошибку 401 Unauthorized.
     Если всё прошло успешно, возвращает пользователя из базы данных."""
@@ -81,7 +82,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, os.getenv("SECRET_KEY"), algorithms=[os.getenv("ALGORITHM")])
+        token = request.cookies.get("session_token")
+        if not token:
+            raise credentials_exception
+        payload = jwt.decode(token.split()[1], os.getenv("SECRET_KEY"), algorithms=[os.getenv("ALGORITHM")])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
