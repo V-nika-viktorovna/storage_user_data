@@ -1,8 +1,9 @@
+from fastapi import FastAPI
+from tortoise import Tortoise, run_async
+
 from auth import hash_password
 from config import toroise_orm
 from models import User
-from fastapi import FastAPI
-from tortoise import Tortoise, run_async
 
 app = FastAPI()
 
@@ -20,4 +21,4 @@ async def create_user(email: str, password: str, is_admin=True):
 if __name__ == "__main__":
     email = input("Введите email в формате: ****@***.**: ")
     password = input("Введите пароль: ")
-    run_async(create_user(email=email , password=password))
+    run_async(create_user(email=email, password=password))
